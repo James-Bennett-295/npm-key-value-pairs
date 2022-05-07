@@ -1,0 +1,29 @@
+{
+  "name": "key-value-pairs",
+  "version": "1.0.0",
+  "description": "Easily get and set key-value pairs in a sqlite3 database",
+  "main": "./src/index.mjs",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/James-Bennett-295/npm-key-value-pairs.git"
+  },
+  "keywords": [
+    "key",
+    "value",
+    "pair",
+    "sqlite",
+    "sqlite3",
+    "db",
+    "database"
+  ],
+  "author": "James Bennett",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/James-Bennett-295/npm-key-value-pairs/issues"
+  },
+  "homepage": "https://github.com/James-Bennett-295/npm-key-value-pairs#readme",
+  "devDependencies": {
+    "sqlite3": "^5.0.6"
+  }
+}
