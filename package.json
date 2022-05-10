@@ -1,6 +1,6 @@
 {
   "name": "key-value-pairs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easily get and set key-value pairs in a sqlite3 database",
   "main": "./src/index.mjs",
   "scripts": {},

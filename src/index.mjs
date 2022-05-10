@@ -1,21 +1,28 @@
-let db;
+let database;
 
-function setDb(database) {
-	if (typeof database !== "object") throw "Invalid database provided to setDb function";
-	db = database;
+const tablePattern = /^[a-zA-Z0-9_\-]+$/;
+
+function setDb(db) {
+	if (typeof db !== "object") throw "Invalid database provided to setDb function";
+	database = db;
 }
 
-function set(key, val) {
+function set(key, val, table, db) {
+
+	if (typeof table === "undefined") table = "key_value_pairs";
+	if (typeof db === "undefined") db = database;
+
+	if (!tablePattern.test(table)) throw "Invalid table name provided";
 
 	db.serialize(() => {
 		db.run(`
-			CREATE TABLE IF NOT EXISTS key_value_pairs(
+			CREATE TABLE IF NOT EXISTS ${table}(
 				key		TEXT	NOT NULL	PRIMARY KEY,
 				val		TEXT	NOT NULL,
 				type	TEXT	NOT NULL
 			);
 		`);
-		db.get("SELECT * FROM key_value_pairs WHERE key = ?", key, (err, row) => {
+		db.get(`SELECT * FROM ${table} WHERE key = ?`, key, (err, row) => {
 			if (err) throw err;
 			let valStr;
 			const type = typeof val === "number" ? (val % 1 === 0 ? "int" : "float") : typeof val;
@@ -28,12 +35,12 @@ function set(key, val) {
 			}
 			if (typeof row === "undefined") {
 				db.run(`
-					INSERT INTO key_value_pairs (key, val, type)
+					INSERT INTO ${table} (key, val, type)
 					VALUES(?, ?, ?);
 				`, key, valStr, type);
 			} else {
 				db.run(`
-					UPDATE key_value_pairs
+					UPDATE ${table}
 					SET val = ?, type = ?
 					WHERE key = ?;
 				`, valStr, type, key);
@@ -42,17 +49,23 @@ function set(key, val) {
 	});
 }
 
-function get(key) {
+function get(key, table, db) {
 	const promise = new Promise((resolve, reject) => {
+
+		if (typeof table === "undefined") table = "key_value_pairs";
+		if (typeof db === "undefined") db = database;
+
+		if (!tablePattern.test(table)) throw "Invalid table name provided";
+
 		db.serialize(() => {
 			db.run(`
-			CREATE TABLE IF NOT EXISTS key_value_pairs(
+			CREATE TABLE IF NOT EXISTS ${table}(
 				key		TEXT	NOT NULL	PRIMARY KEY,
 				val		TEXT	NOT NULL,
 				type	TEXT	NOT NULL
 			);
 		`);
-			db.get("SELECT * FROM key_value_pairs WHERE key = ?", key, (err, row) => {
+			db.get(`SELECT * FROM ${table} WHERE key = ?`, key, (err, row) => {
 				if (err) reject(err);
 				if (typeof row === "undefined") return resolve(undefined);
 				switch (row.type) {
@@ -75,9 +88,15 @@ function get(key) {
 	return promise;
 }
 
-function rm(key) {
+function rm(key, table, db) {
+
+	if (typeof table === "undefined") table = "key_value_pairs";
+	if (typeof db === "undefined") db = database;
+
+	if (!tablePattern.test(table)) throw "Invalid table name provided";
+
 	db.run(`
-		DELETE FROM key_value_pairs
+		DELETE FROM ${table}
 		WHERE key = ?;
 	`, key);
 }
