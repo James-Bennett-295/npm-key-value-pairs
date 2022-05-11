@@ -1,6 +1,6 @@
 let database;
 
-const tablePattern = /^[a-zA-Z0-9_\-]+$/;
+const tablePattern = /^[a-zA-Z0-9_]+$/;
 
 function setDb(db) {
 	if (typeof db !== "object") throw "Invalid database provided to setDb function";
